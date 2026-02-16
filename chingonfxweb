@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHINGON FX - TUBE EDITION</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rock+Salt&family=Caveat:wght@700&family=Share+Tech+Mono&display=swap');
+        
+        body {
+            background-color: #121212;
+            color: #d4d4d4;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            /* Dark Studio Floor Background */
+            background-image: radial-gradient(#2a2a2a 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* --- PEDAL CHASSIS --- */
+        .pedal-chassis {
+            width: 950px;
+            height: 600px; /* Taller for tubes */
+            background-color: #1e1e1e;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.9), 
+                inset 0 1px 1px rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            /* Subtle metal texture */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+            overflow: hidden;
+        }
+
+        /* --- TUBE VENT AREA (TOP) --- */
+        .tube-vent {
+            height: 140px;
+            background: #111;
+            width: 100%;
+            border-bottom: 2px solid #333;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,1);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 80px;
+            /* Mesh pattern */
+            background-image: radial-gradient(#000 2px, transparent 0);
+            background-size: 6px 6px;
+        }
+
+        /* --- GLOWING TUBES (CSS Art) --- */
+        .tube-glass {
+            width: 50px;
+            height: 90px;
+            background: rgba(200, 200, 255, 0.05);
+            border-radius: 10px 10px 4px 4px;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            box-shadow: 
+                0 0 15px rgba(255, 160, 60, 0.2),
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* The Filament Glow */
+        .tube-glow {
+            width: 4px;
+            height: 60px;
+            background: #ffaa00;
+            border-radius: 2px;
+            margin-top: 15px;
+            box-shadow: 
+                0 0 10px #ffaa00,
+                0 0 20px #ff4400,
+                0 0 40px #ff2200;
+            animation: tube-flicker 0.1s infinite alternate;
+            opacity: 0.8;
+        }
+
+        /* Reflection on glass */
+        .tube-glass::after {
+            content: '';
+            position: absolute;
+            top: 5px; right: 5px;
+            width: 10px; height: 40px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+            border-radius: 20px;
+        }
+
+        @keyframes tube-flicker {
+            0% { opacity: 0.8; transform: scaleY(1); }
+            100% { opacity: 1; transform: scaleY(1.02); }
+        }
+
+        /* --- BAKELITE KNOBS (From Image) --- */
+        .knob-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .knob-bakelite {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            /* Glossy Black Bakelite */
+            background: radial-gradient(circle at 30% 30%, #555, #000 60%);
+            box-shadow: 
+                0 10px 15px rgba(0,0,0,0.8),
+                0 0 0 1px #000;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.05s linear;
+        }
+
+        /* The Ridge Texture (Subtle scalloped feel) */
+        .knob-bakelite::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            background: repeating-conic-gradient(
+                rgba(255,255,255,0.03) 0deg 10deg,
+                transparent 10deg 20deg
+            );
+        }
+
+        /* The White Line Indicator (High Contrast) */
+        .knob-pointer-white {
+            position: absolute;
+            top: 10px; left: 50%;
+            width: 4px; height: 30px;
+            background: #fff;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+        
+        .knob-input {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: ns-resize;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        .label-main {
+            font-family: 'Rock Salt', cursive;
+            color: #fff;
+            font-size: 38px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            margin-top: 10px;
+        }
+
+        .label-sub {
+            font-family: 'Share Tech Mono', monospace;
+            color: #aaa;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 12px;
+            letter-spacing: 2px;
+            text-shadow: 0 1px 2px #000;
+        }
+
+        /* --- DISPLAY --- */
+        .screen-housing {
+            width: 200px;
+            height: 110px;
+            background: #000;
+            border: 2px solid #555;
+            border-radius: 4px;
+            box-shadow: inset 0 0 20px #000;
+            position: relative;
+            overflow: hidden;
+            grid-column: 2 / span 2;
+            justify-self: center;
+        }
+
+        canvas#scope {
+            width: 100%; height: 100%;
+            filter: drop-shadow(0 0 5px #0f0);
+        }
+
+        /* --- LAYOUT GRID --- */
+        .control-panel {
+            padding: 20px 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+            gap: 25px;
+            align-items: center;
+        }
+
+        /* --- TOGGLE SWITCH --- */
+        .toggle-switch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 300px; /* Positioned manually */
+            left: 28%;
+        }
+        .toggle-base {
+            width: 36px; height: 36px;
+            background: #888;
+            border-radius: 50%;
+            border: 2px solid #555;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .toggle-bat {
+            width: 8px; height: 30px;
+            background: #ccc;
+            border-radius: 2px;
+            position: absolute; top: -5px;
+            box-shadow: 2px 5px 5px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+        }
+        .sw-left { transform: rotate(-25deg); }
+        .sw-right { transform: rotate(25deg); }
+
+        /* --- PRESETS UI --- */
+        .preset-strip {
+            position: absolute;
+            bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; gap: 10px;
+            background: #222;
+            padding: 8px 20px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .btn-mini {
+            background: #333; border: 1px solid #555; color: #aaa;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px; cursor: pointer; padding: 4px 10px;
+            border-radius: 2px;
+            transition: all 0.2s;
+        }
+        .btn-mini:hover { background: #fff; color: #000; box-shadow: 0 0 10px #fff; }
+
+        /* --- CONFIG PANEL --- */
+        .config-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9); z-index: 100;
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .config-visible { display: flex; }
+
+    </style>
+</head>
+<body>
+
+    <div class="pedal-chassis">
+        <div class="tube-vent">
+            <div class="tube-glass">
+                <div class="tube-glow"></div>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="text-gray-500 font-['Caveat'] text-xl mb-[-5px]">Aural Flux®</div>
+                <div class="label-main">CHINGON FX</div>
+            </div>
+            <div class="tube-glass">
+                <div class="tube-glow"></div>
+            </div>
+        </div>
+
+        <button id="btn-config" class="absolute top-4 right-4 text-gray-500 hover:text-white transition">
+            <i class="fa-solid fa-gear fa-lg"></i>
+        </button>
+
+        <div class="control-panel">
+            
+            <div class="knob-wrapper">
+                <div class="knob-bakelite" id="vis-fua">
+                    <div class="knob-pointer-white"></div>
+                </div>
+                <input type="range" id="param-fua" class="knob-input" min="0" max="127" value="0">
+                <div class="label-sub">FUA</div>
+            </div>
+
+            <div class="knob-wrapper">
+                <div class="knob-bakelite" id="vis-viaje">
+                    <div class="knob-pointer-white"></div>
+                </div>
+                <input type="range" id="param-viaje" class="knob-input" min="0" max="127" value="30">
+                <div class="label-sub">VIAJE</div>
+            </div>
+
+            <div class="knob-wrapper">
+                <div class="knob-bakelite" id="vis-caos">
+                    <div class="knob-pointer-white"></div>
+                </div>
+                <input type="range" id="param-caos" class="knob-input" min="0" max="127" value="0">
+                <div class="label-sub">CAOS</div>
+            </div>
+
+            <div class="knob-wrapper">
+                <div class="knob-bakelite" id="vis-patrona">
+                    <div class="knob-pointer-white"></div>
+                </div>
+                <input type="range" id="param-patrona" class="knob-input" min="0" max="127" value="100">
+                <div class="label-sub text-white">PATRONA</div>
+            </div>
+
+            <div class="knob-wrapper">
+                <div class="knob-bakelite" id="vis-choro">
+                    <div class="knob-pointer-white"></div>
+                </div>
+                <input type="range" id="param-choro" class="knob-input" min="0" max="127" value="0">
+                <div class="label-sub">CHORO</div>
+            </div>
+
+            <div class="screen-housing flex flex-col items-center justify-center">
+                <canvas id="scope"></canvas>
+                <div id="preset-display" class="absolute bottom-1 right-2 font-mono text-[10px] text-green-500">INIT</div>
+            </div>
+
+            <div class="toggle-switch">
+                <div class="text-[10px] font-mono text-gray-500 mb-1">ÑANGO</div>
+                <div class="toggle-base">
+                    <div id="sw-filter" class="toggle-bat sw-left"></div>
+                </div>
+                <div class="text-[10px] font-mono text-gray-500 mt-1">CHONCHO</div>
+            </div>
+
+            <div class="knob-wrapper">
+                <div class="knob-bakelite" id="vis-pache">
+                    <div class="knob-pointer-white"></div>
+                </div>
+                <input type="range" id="param-pache" class="knob-input" min="0" max="127" value="0">
+                <div class="label-sub">PACHE</div>
+            </div>
+            
+             <div class="knob-wrapper">
+                <div class="knob-bakelite" id="vis-aplastar">
+                    <div class="knob-pointer-white"></div>
+                </div>
+                <input type="range" id="param-aplastar" class="knob-input" min="0" max="127" value="0">
+                <div class="label-sub">APLASTAR</div>
+            </div>
+
+        </div>
+
+        <div class="preset-strip">
+            <button class="btn-mini" id="btn-prev"><</button>
+            <span class="text-xs font-mono text-green-500 self-center w-24 text-center" id="bank-label">01: FACTORY</span>
+            <button class="btn-mini" id="btn-next">></button>
+            <div class="w-px bg-gray-600 mx-1"></div>
+            <button class="btn-mini" id="btn-save">SAVE</button>
+            <button class="btn-mini" id="btn-load">LOAD</button>
+        </div>
+
+    </div>
+
+    <div id="config-panel" class="config-overlay">
+        <div class="bg-[#1a1a1a] border border-gray-600 p-8 rounded max-w-md w-full relative shadow-2xl">
+            <h2 class="text-xl font-bold text-gray-300 mb-4 font-mono">BACK PANEL</h2>
+            
+            <div class="mb-4">
+                <label class="block text-xs text-gray-500 mb-1 font-mono">AUDIO INPUT (CANAL 3 = KICK)</label>
+                <select id="audio-input-select" class="w-full bg-black text-green-500 border border-gray-600 p-2 font-mono text-xs">
+                    <option>Searching...</option>
+                </select>
+            </div>
+
+            <div class="mb-6 border-t border-gray-700 pt-4">
+                <label class="block text-xs text-gray-500 mb-2 font-mono">DEBUG MODE</label>
+                <button id="btn-test-kick" class="w-full py-2 bg-gray-800 text-gray-400 border border-gray-600 hover:text-white hover:border-white transition font-mono text-xs">
+                    FORCE KICK (4/4) [OFF]
+                </button>
+            </div>
+
+            <button id="btn-power" class="w-full py-3 bg-gradient-to-r from-red-900 to-red-800 text-white font-bold border border-red-700 hover:from-red-700 hover:to-red-600 transition font-mono rounded">
+                POWER ON (ENCENDER)
+            </button>
+            
+            <button id="btn-close-config" class="absolute top-2 right-4 text-gray-500 hover:text-white">x</button>
+        </div>
+    </div>
+
+    <script>
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        let isRunning = false;
+        let mediaStreamSource = null;
+        let nodes = {};
+        let analyser = null;
+        let kickInterval = null;
+
+        // --- 30 FACTORY PRESETS ---
+        const factoryPresets = [
+            { name: "INIT CLEAN", fua: 0, viaje: 10, caos: 0, choro: 0, pache: 20, aplastar: 0, patrona: 100, filter: 'lp' },
+            { name: "WARM TUBE", fua: 45, viaje: 15, caos: 20, choro: 0, pache: 40, aplastar: 0, patrona: 100, filter: 'lp' },
+            { name: "DIRTY SLAP", fua: 80, viaje: 35, caos: 10, choro: 10, pache: 10, aplastar: 0, patrona: 90, filter: 'bp' },
+            { name: "DUB ECHO", fua: 20, viaje: 85, caos: 60, choro: 90, pache: 60, aplastar: 0, patrona: 100, filter: 'lp' },
+            { name: "TECHNO PUMP", fua: 30, viaje: 10, caos: 0, choro: 0, pache: 10, aplastar: 110, patrona: 110, filter: 'lp' },
+            { name: "ACID BATH", fua: 110, viaje: 40, caos: 127, choro: 60, pache: 30, aplastar: 20, patrona: 80, filter: 'bp' },
+            { name: "SPACE VERB", fua: 10, viaje: 20, caos: 10, choro: 0, pache: 127, aplastar: 0, patrona: 90, filter: 'lp' },
+            { name: "BROKEN TAPE", fua: 90, viaje: 60, caos: 80, choro: 40, pache: 20, aplastar: 0, patrona: 85, filter: 'lp' },
+            { name: "SUB BASS", fua: 60, viaje: 0, caos: 20, choro: 0, pache: 0, aplastar: 50, patrona: 120, filter: 'lp' },
+            { name: "INDUSTRIAL", fua: 127, viaje: 10, caos: 50, choro: 0, pache: 80, aplastar: 80, patrona: 70, filter: 'bp' },
+            { name: "LOFI DREAM", fua: 50, viaje: 70, caos: 100, choro: 30, pache: 90, aplastar: 10, patrona: 90, filter: 'lp' },
+            { name: "GHOST DUB", fua: 30, viaje: 110, caos: 40, choro: 100, pache: 100, aplastar: 0, patrona: 90, filter: 'bp' },
+            { name: "HARD KICK", fua: 100, viaje: 0, caos: 0, choro: 0, pache: 0, aplastar: 0, patrona: 100, filter: 'lp' },
+            { name: "SIDECHAINER", fua: 0, viaje: 0, caos: 0, choro: 0, pache: 0, aplastar: 127, patrona: 100, filter: 'lp' },
+            { name: "RESONATOR", fua: 40, viaje: 5, caos: 120, choro: 80, pache: 20, aplastar: 0, patrona: 90, filter: 'bp' },
+            { name: "UNDERWATER", fua: 20, viaje: 40, caos: 10, choro: 50, pache: 100, aplastar: 0, patrona: 90, filter: 'lp' },
+            { name: "CRUSHED", fua: 120, viaje: 50, caos: 0, choro: 0, pache: 0, aplastar: 0, patrona: 80, filter: 'lp' },
+            { name: "PING PONG", fua: 10, viaje: 90, caos: 30, choro: 60, pache: 30, aplastar: 0, patrona: 100, filter: 'lp' },
+            { name: "DARK ROOM", fua: 60, viaje: 20, caos: 90, choro: 10, pache: 80, aplastar: 0, patrona: 100, filter: 'lp' },
+            { name: "RADIO", fua: 80, viaje: 0, caos: 127, choro: 0, pache: 10, aplastar: 0, patrona: 90, filter: 'bp' },
+            { name: "GLITCH", fua: 100, viaje: 10, caos: 0, choro: 120, pache: 0, aplastar: 0, patrona: 80, filter: 'lp' },
+            { name: "SHIMMER", fua: 0, viaje: 80, caos: 40, choro: 70, pache: 120, aplastar: 0, patrona: 90, filter: 'lp' },
+            { name: "BASS GLUE", fua: 30, viaje: 0, caos: 0, choro: 0, pache: 10, aplastar: 60, patrona: 110, filter: 'lp' },
+            { name: "LEAD SOAR", fua: 70, viaje: 60, caos: 30, choro: 30, pache: 70, aplastar: 0, patrona: 100, filter: 'bp' },
+            { name: "PAD WASH", fua: 20, viaje: 100, caos: 50, choro: 60, pache: 127, aplastar: 30, patrona: 90, filter: 'lp' },
+            { name: "NOIZE", fua: 127, viaje: 127, caos: 127, choro: 127, pache: 127, aplastar: 0, patrona: 60, filter: 'bp' },
+            { name: "SUBTLE", fua: 15, viaje: 15, caos: 10, choro: 0, pache: 15, aplastar: 0, patrona: 100, filter: 'lp' },
+            { name: "DRY DRIVE", fua: 100, viaje: 0, caos: 50, choro: 0, pache: 0, aplastar: 0, patrona: 95, filter: 'lp' },
+            { name: "WET ONLY", fua: 50, viaje: 80, caos: 20, choro: 0, pache: 80, aplastar: 0, patrona: 0, filter: 'lp' },
+            { name: "FINALIZER", fua: 20, viaje: 0, caos: 0, choro: 0, pache: 10, aplastar: 20, patrona: 100, filter: 'lp' }
+        ];
+
+        // --- PRESET LOGIC ---
+        let currentPreset = 0;
+        let presets = JSON.parse(localStorage.getItem('chingon_presets'));
+
+        // Load Factory if Empty
+        if (!presets || presets.length < 30 || presets.every(p => p === null)) {
+            presets = JSON.parse(JSON.stringify(factoryPresets)); // Deep copy
+            localStorage.setItem('chingon_presets', JSON.stringify(presets));
+            console.log("Factory Presets Loaded");
+        }
+        
+        function updateDisplay() {
+            const p = presets[currentPreset];
+            const num = (currentPreset+1).toString().padStart(2,'0');
+            document.getElementById('bank-label').innerText = `${num}: ${p ? p.name.substring(0,10) : "EMPTY"}`;
+            document.getElementById('preset-display').innerText = p ? p.name : "---";
+        }
+
+        document.getElementById('btn-prev').onclick = () => { currentPreset = (currentPreset-1+30)%30; updateDisplay(); };
+        document.getElementById('btn-next').onclick = () => { currentPreset = (currentPreset+1)%30; updateDisplay(); };
+        
+        document.getElementById('btn-save').onclick = () => {
+            const name = prompt("NAME PRESET:", presets[currentPreset].name);
+            if(name){
+                const data = {
+                    name,
+                    fua: document.getElementById('param-fua').value,
+                    viaje: document.getElementById('param-viaje').value,
+                    caos: document.getElementById('param-caos').value,
+                    choro: document.getElementById('param-choro').value,
+                    pacheco: document.getElementById('param-pache').value,
+                    aplastar: document.getElementById('param-aplastar').value,
+                    patrona: document.getElementById('param-patrona').value,
+                    filter: document.getElementById('sw-filter').classList.contains('sw-left') ? 'lp' : 'bp'
+                };
+                presets[currentPreset] = data;
+                localStorage.setItem('chingon_presets', JSON.stringify(presets));
+                updateDisplay();
+            }
+        };
+
+        document.getElementById('btn-load').onclick = () => {
+            const p = presets[currentPreset];
+            if(!p) return alert("Empty Slot");
+            ['fua','viaje','caos','choro','pacheco','aplastar','patrona'].forEach(k => {
+                const el = document.getElementById('param-'+k);
+                if(el) {
+                    el.value = p[k];
+                    el.dispatchEvent(new Event('input'));
+                }
+            });
+            const sw = document.getElementById('sw-filter');
+            if(p.filter === 'lp') { sw.className = 'toggle-bat sw-left'; } else { sw.className = 'toggle-bat sw-right'; }
+            if(isRunning) updateAudioParams();
+        };
+
+        // --- VISUALS ---
+        function updateKnob(id, val) {
+            const deg = (val / 127) * 280 - 140; 
+            const vis = document.getElementById(id.replace('param-', 'vis-'));
+            if(vis) vis.style.transform = `rotate(${deg}deg)`;
+        }
+
+        const params = ['fua','viaje','caos','choro','pache','aplastar','patrona'];
+        params.forEach(p => {
+            const el = document.getElementById('param-'+p);
+            el.addEventListener('input', (e) => {
+                updateKnob(el.id, e.target.value);
+                if(isRunning) updateAudioParams();
+            });
+            updateKnob(el.id, el.value);
+        });
+
+        document.getElementById('sw-filter').onclick = (e) => {
+            const el = e.target;
+            if(el.classList.contains('sw-left')) {
+                el.classList.replace('sw-left', 'sw-right'); 
+            } else {
+                el.classList.replace('sw-right', 'sw-left'); 
+            }
+            if(isRunning) updateAudioParams();
+        };
+
+        // --- AUDIO ENGINE ---
+        function makeDistortionCurve(k) {
+            const n = 44100, curve = new Float32Array(n);
+            for (let i=0; i<n; ++i) { let x = i*2/n - 1; curve[i] = Math.tanh(x*k); }
+            return curve;
+        }
+
+        function initAudio() {
+            analyser = ctx.createAnalyser();
+            analyser.fftSize = 2048;
+
+            nodes.inL = ctx.createGain(); nodes.inR = ctx.createGain();
+            nodes.kickIn = ctx.createGain(); 
+
+            nodes.merger = ctx.createChannelMerger(2);
+            nodes.inL.connect(nodes.merger, 0, 0); nodes.inR.connect(nodes.merger, 0, 1);
+
+            nodes.preGain = ctx.createGain();
+            nodes.drive = ctx.createWaveShaper(); nodes.drive.curve = makeDistortionCurve(1.5); 
+            nodes.drive.oversample = '4x';
+            nodes.merger.connect(nodes.preGain); nodes.preGain.connect(nodes.drive);
+
+            nodes.ducking = ctx.createGain();
+            nodes.drive.connect(nodes.ducking);
+
+            nodes.split = ctx.createGain(); 
+            nodes.ducking.connect(nodes.split);
+            
+            nodes.delayL = ctx.createDelay(2.0); nodes.delayR = ctx.createDelay(2.0);
+            nodes.fbIn = ctx.createGain(); 
+            nodes.fbFilter = ctx.createBiquadFilter(); 
+            nodes.fbDist = ctx.createWaveShaper(); nodes.fbDist.curve = makeDistortionCurve(1.0);
+
+            nodes.split.connect(nodes.delayL); nodes.split.connect(nodes.delayR);
+            
+            nodes.delayL.connect(nodes.fbIn); nodes.delayR.connect(nodes.fbIn);
+            nodes.fbIn.connect(nodes.fbDist); nodes.fbDist.connect(nodes.fbFilter);
+            nodes.fbFilter.connect(nodes.delayL); nodes.fbFilter.connect(nodes.delayR);
+
+            nodes.verbSend = ctx.createGain();
+            nodes.verb = ctx.createConvolver();
+            
+            const len = ctx.sampleRate * 2; const buf = ctx.createBuffer(2, len, ctx.sampleRate);
+            for(let i=0;i<len;i++) { 
+                let d = Math.pow(1-i/len,3);
+                buf.getChannelData(0)[i] = (Math.random()*2-1)*d; 
+                buf.getChannelData(1)[i] = (Math.random()*2-1)*d; 
+            }
+            nodes.verb.buffer = buf;
+            nodes.delayL.connect(nodes.verbSend); nodes.delayR.connect(nodes.verbSend);
+            nodes.verbSend.connect(nodes.verb);
+
+            nodes.master = ctx.createGain();
+            nodes.ducking.connect(nodes.master); 
+            nodes.delayL.connect(nodes.master); nodes.delayR.connect(nodes.master); 
+            nodes.verb.connect(nodes.master); 
+            nodes.kickIn.connect(nodes.master);
+
+            nodes.master.connect(analyser);
+            nodes.master.connect(ctx.destination);
+
+            nodes.scRect = ctx.createWaveShaper();
+            const nSc = 1024; const scCurve = new Float32Array(nSc);
+            for(let i=0;i<nSc;i++) scCurve[i] = Math.abs(i*2/nSc - 1);
+            nodes.scRect.curve = scCurve;
+
+            nodes.scSmooth = ctx.createBiquadFilter(); 
+            nodes.scSmooth.type = 'lowpass'; nodes.scSmooth.frequency.value = 10;
+
+            nodes.scGain = ctx.createGain(); 
+            nodes.scConst = ctx.createConstantSource(); nodes.scConst.offset.value = 1; nodes.scConst.start();
+
+            nodes.kickIn.connect(nodes.scRect);
+            nodes.scRect.connect(nodes.scSmooth);
+            nodes.scSmooth.connect(nodes.scGain);
+            
+            nodes.scGain.connect(nodes.ducking.gain);
+            nodes.scConst.connect(nodes.ducking.gain);
+            
+            updateAudioParams();
+            drawScope();
+            
+            // Auto-load current preset
+            document.getElementById('btn-load').click();
+        }
+
+        function updateAudioParams() {
+            if(!nodes.preGain) return;
+            const t = ctx.currentTime;
+            
+            const valFua = parseInt(document.getElementById('param-fua').value)/127;
+            const drive = Math.pow(valFua, 2.3) * 10 + 1;
+            nodes.preGain.gain.setTargetAtTime(drive, t, 0.1);
+
+            const valViaje = parseInt(document.getElementById('param-viaje').value)/127;
+            const time = 0.03 + (valViaje * 1.2); 
+            const mix = Math.pow(valViaje, 1.7);
+            
+            nodes.delayL.delayTime.setTargetAtTime(time, t, 0.1);
+            nodes.delayR.delayTime.setTargetAtTime(time + 0.01, t, 0.1); 
+            nodes.split.gain.setTargetAtTime(mix, t, 0.1);
+
+            const valCaos = parseInt(document.getElementById('param-caos').value)/127;
+            const freq = 80 + Math.pow(valCaos, 2) * 9000;
+            if(nodes.fbFilter) nodes.fbFilter.frequency.setTargetAtTime(freq, t, 0.1);
+
+            const valChoro = parseInt(document.getElementById('param-choro').value)/127;
+            nodes.fbIn.gain.setTargetAtTime(valChoro * 1.1, t, 0.1);
+
+            const valPache = parseInt(document.getElementById('param-pache').value)/127;
+            nodes.verbSend.gain.setTargetAtTime(valPache, t, 0.1);
+
+            const valApla = parseInt(document.getElementById('param-aplastar').value)/127;
+            nodes.scGain.gain.setTargetAtTime(-valApla * 2, t, 0.1);
+
+            const valPat = parseInt(document.getElementById('param-patrona').value)/127;
+            nodes.master.gain.setTargetAtTime(valPat, t, 0.1);
+
+            const isLeft = document.getElementById('sw-filter').classList.contains('sw-left');
+            if(nodes.fbFilter) nodes.fbFilter.type = isLeft ? 'lowpass' : 'bandpass';
+        }
+
+        function triggerInternalKick() {
+            if(!isRunning || !nodes.kickIn) return;
+            const t = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.frequency.setValueAtTime(150, t);
+            osc.frequency.exponentialRampToValueAtTime(40, t+0.1);
+            g.gain.setValueAtTime(1, t);
+            g.gain.exponentialRampToValueAtTime(0.01, t+0.4);
+            osc.connect(g);
+            g.connect(nodes.kickIn);
+            osc.start(t);
+            osc.stop(t+0.5);
+        }
+
+        document.getElementById('btn-test-kick').onclick = (e) => {
+            const btn = e.target;
+            if(kickInterval) {
+                clearInterval(kickInterval);
+                kickInterval = null;
+                btn.innerText = "FORCE KICK (4/4) [OFF]";
+                btn.classList.remove('text-white', 'border-white');
+            } else {
+                triggerInternalKick();
+                kickInterval = setInterval(triggerInternalKick, 500); 
+                btn.innerText = "FORCE KICK (4/4) [ON]";
+                btn.classList.add('text-white', 'border-white');
+            }
+        };
+
+        function drawScope() {
+            const cvs = document.getElementById('scope');
+            const c = cvs.getContext('2d');
+            const w = cvs.width; const h = cvs.height;
+            const data = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteTimeDomainData(data);
+            
+            c.fillStyle = 'rgba(0,0,0,0.2)'; 
+            c.fillRect(0,0,w,h);
+            c.lineWidth = 2; c.strokeStyle = '#33ff33'; c.beginPath();
+            
+            const slice = w * 1.0 / data.length;
+            let x = 0;
+            for(let i=0; i<data.length; i++) {
+                const v = data[i]/128.0;
+                const y = v * h/2;
+                if(i===0) c.moveTo(x,y); else c.lineTo(x,y);
+                x+=slice;
+            }
+            c.stroke();
+            requestAnimationFrame(drawScope);
+        }
+
+        async function getDevices() {
+            const sel = document.getElementById('audio-input-select');
+            const devs = await navigator.mediaDevices.enumerateDevices();
+            sel.innerHTML = '<option>SELECT INPUT...</option>';
+            devs.filter(d=>d.kind==='audioinput').forEach(d=>{
+                const o = document.createElement('option');
+                o.value = d.deviceId; o.text = d.label || "Device";
+                sel.appendChild(o);
+            });
+        }
+
+        document.getElementById('btn-config').onclick = () => { document.getElementById('config-panel').classList.add('config-visible'); getDevices(); };
+        document.getElementById('btn-close-config').onclick = () => document.getElementById('config-panel').classList.remove('config-visible');
+        
+        document.getElementById('btn-power').onclick = async () => {
+            await ctx.resume();
+            initAudio();
+            isRunning = true;
+            document.getElementById('config-panel').classList.remove('config-visible');
+            updateDisplay();
+            
+            const id = document.getElementById('audio-input-select').value;
+            if(id && id !== 'SELECT INPUT...') {
+                if(mediaStreamSource) mediaStreamSource.disconnect();
+                const s = await navigator.mediaDevices.getUserMedia({audio:{deviceId:{exact:id}, channelCount:4, echoCancellation:false}});
+                mediaStreamSource = ctx.createMediaStreamSource(s);
+                const spl = ctx.createChannelSplitter(4);
+                mediaStreamSource.connect(spl);
+                spl.connect(nodes.inL, 0); spl.connect(nodes.inR, 1);
+                try { spl.connect(nodes.kickIn, 2); } catch(e){}
+            }
+        };
+
+    </script>
+</body>
+</html>
